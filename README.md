@@ -1,0 +1,1 @@
+# hillel_shop_django
