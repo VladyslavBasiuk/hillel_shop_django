@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-.idea
+.idea/
 # C extensions
 *.so
 
@@ -129,5 +129,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 bin/
-
+bin
 images/
+share/
+/bin/
+!/bin/

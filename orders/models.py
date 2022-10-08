@@ -8,8 +8,10 @@ from shop.model_choices import DiscountTypes
 
 
 class Discount(PKMixin):
-    amount = models.PositiveSmallIntegerField(
-        default=0
+    amount = models.DecimalField(
+        default=0,
+        decimal_places=DECIMAL_PLACES,
+        max_digits=MAX_DIGITS
     )
     code = models.CharField(
         max_length=32
