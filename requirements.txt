@@ -6,3 +6,4 @@ Pillow==9.2.0
 Jinja2==3.1.2
 ipdb==0.13.9
 IPython==8.5.0
+Faker==15
