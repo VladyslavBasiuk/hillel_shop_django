@@ -24,6 +24,9 @@ class Discount(PKMixin):
         default=DiscountTypes.VALUE
     )
 
+    def __str__(self):
+        return f'{self.code} | {self.amount}'
+
 
 class Order(PKMixin):
     total_amount = models.DecimalField(
@@ -37,7 +40,7 @@ class Order(PKMixin):
         null=True,
         blank=True
     )
-    products = models.ManyToManyField("items.Product")
+    products = models.ManyToManyField("products.Product")
     discount = models.ForeignKey(
         Discount,
         on_delete=models.SET_NULL,

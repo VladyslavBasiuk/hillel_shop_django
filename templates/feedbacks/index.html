@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
+
 <h1>Feedbacks</h1>
 
 {% for item in feedbacks %}
@@ -24,5 +21,5 @@
     <input type="submit" value="Create feedback">
     </form>
 </div>
-</body>
-</html>
+
+{% endblock content %}

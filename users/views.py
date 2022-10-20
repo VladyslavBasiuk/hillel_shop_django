@@ -20,5 +20,5 @@ class SignUpView(TemplateView):
         if form.is_valid():
             new_user = form.save()
             login(request, new_user)
-            return redirect('login')
+            return redirect('/main/')
         return self.get(request, form=form, *args, **kwargs)
