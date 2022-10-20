@@ -1,7 +1,6 @@
 from os import path
-
-from django.core.validators import MinValueValidator
 from django.db import models
+from shop.constans import MAX_DIGITS, DECIMAL_PLACES
 from shop.mixins.models_mixins import PKMixin
 
 
@@ -11,17 +10,27 @@ def upload_image(instance, filename):
            f'{instance.pk}/image{extension}'
 
 
-class Item(PKMixin):
+class Product(PKMixin):
     name = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField()
     image = models.ImageField(upload_to=upload_image)
     category = models.ForeignKey(
-        'items.Category',
+        'products.Category',
         on_delete=models.CASCADE
     )
+    price = models.DecimalField(
+        max_digits=MAX_DIGITS,
+        decimal_places=DECIMAL_PLACES,
+        default=0
+    )
+    sku = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True)
+    products = models.ManyToManyField('products.Product', blank=True)
 
     def __str__(self):
-        return f'{self.name} | {self.category}'
+        return f'{self.name} | {self.category} | {self.price} | {self.sku}'
 
 
 class Category(PKMixin):
@@ -30,20 +39,4 @@ class Category(PKMixin):
     image = models.ImageField(upload_to=upload_image)
 
     def __str__(self):
-        return f'{self.name}'
-
-
-class Product(models.Model):
-    name = models.CharField(max_length=255)
-    price = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)]
-    )
-    sku = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True
-    )
-    items = models.ManyToManyField(Item)
-
-    def __str__(self):
-        return f'{self.name} | {self.price}'
+        return f'{self.name} | {self.description}'
