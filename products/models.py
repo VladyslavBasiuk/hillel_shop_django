@@ -13,7 +13,9 @@ def upload_image(instance, filename):
 class Product(PKMixin):
     name = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField()
-    image = models.ImageField(upload_to=upload_image)
+    image = models.ImageField(upload_to=upload_image,
+                              default='static/images/example_img.jpg'
+                              )
     category = models.ForeignKey(
         'products.Category',
         on_delete=models.CASCADE
