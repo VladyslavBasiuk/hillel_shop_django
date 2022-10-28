@@ -30,9 +30,11 @@ class Product(PKMixin):
         blank=True,
         null=True)
     products = models.ManyToManyField('products.Product', blank=True)
+    stock = models.PositiveIntegerField(default=0)
+    available = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.name} | {self.category} | {self.price} | {self.sku}'
+        return f'{self.name} | {self.category} | {self.price} | {self.sku} | {self.stock}' # noqa
 
 
 class Category(PKMixin):
