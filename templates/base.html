@@ -38,18 +38,23 @@
                         </li>
                         {% if request.user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'feedbacks' %}">Feedbacks</a>
+                                <a class="nav-link active" href="{% url 'feedbacks' %}">Feedbacks</a>
                             </li>
                         {% endif %}
+                        <li class="cart">
+                            <a class="nav-link active" href="{% url 'shopping_cart' %}' %}"><div align="right">Корзина</div></a>
+                        </li>
+
                     </ul>
                 </div>
             </div>
         </nav>
     {% endblock header %}
 
-    {% block content %}
-    {% endblock content %}
-
+    <div id="content">
+        {% block content %}
+        {% endblock content %}
+    </div>
     {% block footer %}
         <footer>
             <section>
