@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'orders',
     'users',
     'feedbacks',
-    'main'
+    'main',
+    'tracking',
 ]
 
 MIDDLEWARE = [
@@ -61,9 +62,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'shop.middlewares.ErrorTraceMiddleware',
 ]
 
 ROOT_URLCONF = 'shop.urls'
+
+APPEND_SLASH = True
 
 TEMPLATES = [
     {
@@ -143,3 +147,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGOUT_REDIRECT_URL = reverse_lazy('main')
 LOGIN_REDIRECT_URL = reverse_lazy('main')
 LOGIN_URL = reverse_lazy('login')
+
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
