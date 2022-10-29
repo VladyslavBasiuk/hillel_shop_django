@@ -8,3 +8,4 @@ ipdb==0.13.9
 IPython==8.5.0
 Faker==15
 django-lifecycle==1.0.0
+celery[redis]==5.2.7
