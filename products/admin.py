@@ -5,8 +5,11 @@ from products.models import Product, Category
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('show_product_image', 'name', 'price', 'sku', 'created_at')
-    list_filter = ('created_at', 'price', 'sku')
+    list_display = ('show_product_image', 'name', 'price', 'sku', 'stock',
+                    'available', 'created_at'
+                    )
+    list_filter = ('name', 'created_at', 'price', 'sku', 'available')
+    list_editable = ['name', 'price', 'stock', 'sku', 'available']
 
     @staticmethod
     def show_product_image(obj):
@@ -19,7 +22,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('show_category_image', 'name', 'description', )
+    list_display = ('show_category_image', 'name', 'description')
 
     @staticmethod
     def show_category_image(obj):

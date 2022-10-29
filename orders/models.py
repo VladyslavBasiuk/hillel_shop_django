@@ -2,12 +2,14 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import SET_NULL
+from django_lifecycle import LifecycleModelMixin, hook, AFTER_UPDATE, \
+    BEFORE_SAVE
 from shop.constans import MAX_DIGITS, DECIMAL_PLACES
 from shop.mixins.models_mixins import PKMixin
 from shop.model_choices import DiscountTypes
 
 
-class Discount(PKMixin):
+class Discount(LifecycleModelMixin, PKMixin):
     amount = models.DecimalField(
         default=0,
         decimal_places=DECIMAL_PLACES,
@@ -25,7 +27,7 @@ class Discount(PKMixin):
     )
 
     def __str__(self):
-        return f'{self.code} | {self.amount}'
+        return f'{self.code} | {self.amount} | {self.is_active}'
 
 
 class Order(PKMixin):
@@ -47,17 +49,32 @@ class Order(PKMixin):
         null=True,
         blank=True
     )
+    is_active = models.BooleanField(default=True)
+    is_paid = models.BooleanField(default=False)
 
     def total_amount_with_discount(self):
         if self.discount:
-            if self.discount.discount_type == DiscountTypes.VALUE:
-                return (self.total_amount - self.discount.amount).quantize(
-                    Decimal('.00'))
-            elif self.discount.discount_type == DiscountTypes.PERCENT:
-                return self.total_amount - (self.total_amount / 100 *
-                                            self.discount.amount).quantize(
-                    Decimal('.00'))
+            if self.products.exists():
+                if self.discount.discount_type == DiscountTypes.VALUE:
+                    return (self.total_amount - self.discount.amount).quantize(
+                        Decimal('.00'))
+                elif self.discount.discount_type == DiscountTypes.PERCENT:
+                    return self.total_amount - (self.total_amount / 100 *
+                                                self.discount.amount).quantize(
+                        Decimal('.00'))
         return self.total_amount
 
     def __str__(self):
         return f'{self.total_amount_with_discount()}'
+
+    @hook(BEFORE_SAVE)
+    def order_after_save(self):
+        self.total_amount = 0
+        for product in self.products.all():
+            self.total_amount += product.price
+
+    @hook(AFTER_UPDATE)
+    def order_after_update(self):
+        if self.discount:
+            self.total_amount = self.total_amount_with_discount()
+            self.save(update_fields=('total_amount',))

@@ -4,6 +4,7 @@ from orders.models import Order, Discount
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'total_amount', 'discount')
     list_filter = ('created_at',)
 
 
