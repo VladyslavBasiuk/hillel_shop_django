@@ -13,6 +13,7 @@ import environ
 from pathlib import Path
 
 from django.urls import reverse_lazy
+from celery.schedules import crontab
 
 env = environ.Env(
     # set casting, default value
@@ -45,6 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'django_celery_results',
+    'django_celery_beat',
     # own apps
     'products',
     'orders',
@@ -52,6 +56,7 @@ INSTALLED_APPS = [
     'feedbacks',
     'main',
     'tracking',
+    'currencies',
 ]
 
 MIDDLEWARE = [
@@ -150,3 +155,10 @@ LOGIN_URL = reverse_lazy('login')
 
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_IMPORTS = ("shop.tasks",)
+CELERY_BEAT_SCHEDULE = {
+    'Get currency': {
+        'task': 'currencies.tasks.get_currencies',
+        'schedule': crontab(hour='8', minute='5'),
+    },
+}
