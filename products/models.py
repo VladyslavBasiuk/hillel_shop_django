@@ -2,6 +2,7 @@ from os import path
 from django.db import models
 from shop.constans import MAX_DIGITS, DECIMAL_PLACES
 from shop.mixins.models_mixins import PKMixin
+from shop.model_choices import Currency
 
 
 def upload_image(instance, filename):
@@ -32,6 +33,11 @@ class Product(PKMixin):
     products = models.ManyToManyField('products.Product', blank=True)
     stock = models.PositiveIntegerField(default=0)
     available = models.BooleanField(default=True)
+    currency = models.CharField(
+        max_length=3,
+        choices=Currency.choices,
+        default=Currency.USD
+    )
 
     def __str__(self):
         return f'{self.name} | {self.category} | {self.price} | {self.sku} | {self.stock}' # noqa
