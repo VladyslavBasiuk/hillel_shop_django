@@ -3,6 +3,7 @@ from django.db import models
 from shop.constans import MAX_DIGITS, DECIMAL_PLACES
 from shop.mixins.models_mixins import PKMixin
 from shop.model_choices import Currency
+from django.core.cache import cache
 
 
 def upload_image(instance, filename):
@@ -38,6 +39,18 @@ class Product(PKMixin):
         choices=Currency.choices,
         default=Currency.USD
     )
+
+    @classmethod
+    def _cache_key(cls):
+        return 'products'
+
+    @classmethod
+    def get_products(cls):
+        products = cache.get(cls._cache_key())
+        if not products:
+            products = Product.objects.all()
+            cache.set(cls._cache_key(), products)
+        return products
 
     def __str__(self):
         return f'{self.name} | {self.category} | {self.price} | {self.sku} | {self.stock}' # noqa

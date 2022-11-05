@@ -135,3 +135,6 @@ share/
 /bin/
 !/bin/
 /static/
+
+dump.rdb
+/django_cache/
