@@ -30,7 +30,7 @@
                                                 <p>{{ sub.name }}</p>
                                             {% endfor %}
                                         {% endif %}
-                                    <i>Price: {{ product.price }} UAH</i>
+                                    <i>Price in UAH: {{ product.exchange_price }}</i>
                                     {% if request.user.is_authenticated %}
                                         <form method="post"
                                               action="{% url 'add_shopping_cart' %}">
