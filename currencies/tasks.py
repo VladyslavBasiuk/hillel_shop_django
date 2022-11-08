@@ -21,8 +21,9 @@ def clear_old_currencies():
 
 @shared_task
 def get_currencies():
+    currency_list = privat_currency_client.get_currency()
     currency_history_list = []
-    for currency in privat_currency_client:
+    for currency in currency_list:
         try:
             if currency['ccy'] in [elem.value for elem in Currency]:
                 currency_history_list.append(
