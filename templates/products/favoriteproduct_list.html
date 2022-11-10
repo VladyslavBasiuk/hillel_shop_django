@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <section>
+        <div class="container">
+            <div class="row">
+                {% for favorite in object_list %}
+                    <div class="col {% if favorite.product.products.exists %}col-lg-6{% else %}col-lg-3{% endif %}">
+                        <div class="card mb-3">
+                            {% if favorite.product.image %}
+                                <figure class="text-center">
+                                    <img src="{{ favorite.product.image.url }}"
+                                         class="product-image p-3"
+                                         alt="{{ favorite.product.name }}">
+                                </figure>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ favorite.product.name }}</h5>
+                                <p class="small">{{ favorite.product.category.name }}</p>
+                                <p class="card-text">
+                                    {{ favorite.product.description|truncatewords:16 }}
+                                </p>
+                                {% if favorite.product.products.exists %}
+                                    <p>Including:</p>
+                                    {% for sub in favorite.product.products.iterator %}
+                                        <div class="d-inline-flex flex-column rounded border p-2">
+                                            <p>{{ sub.name }}</p>
+                                            <figure class="text-center d-inline">
+                                                <img src="{{ sub.image.url }}"
+                                                     class="product-image p-3"
+                                                     alt="{{ favorite.product.name }}">
+                                            </figure>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                                <div class="text-center">
+                                    <div class="h3">
+                                        {{ favorite.product.exchange_price }} UAH
+                                    </div>
+                                </div>
+                                <form method="post"
+                                      action="{% url 'add_shopping_cart' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden"
+                                           value="{{ product.id }}"
+                                           name="product_uuid">
+                                    <input type="submit"
+                                           class="btn btn-primary"
+                                           value="Buy it">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <h3>Your cart is empty.</h3>
+                        <p>Go to <a href="{% url 'products' %}">products</a>
+                            page and add something good to favorite.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock content %}
