@@ -1,10 +1,11 @@
 import csv
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.db.models import OuterRef, Exists
 from django.urls import reverse_lazy
 from django.views.generic import ListView, FormView, DetailView
 from products.forms import ImportForm
-from products.models import Product
+from products.models import Product, FavoriteProduct
 from shop.mixins.views_mixins import UserVerification
 from shop.settings import DOMAIN
 
@@ -13,11 +14,46 @@ class ProductView(ListView):
     model = Product
 
     def get_queryset(self):
-        return self.model.get_products()
+        qs = self.model.get_products()
+        if self.request.user.is_authenticated:
+            sq = FavoriteProduct.objects.filter(
+                product=OuterRef('id'),
+                user=self.request.user
+            )
+            qs = qs \
+                .prefetch_related('in_favorites') \
+                .annotate(is_favorite=Exists(sq))
+        return qs
 
 
-class ProductDetail(DetailView):
+class ProductDetailView(DetailView):
     model = Product
+
+
+class FavoriteProductsView(ListView):
+    model = FavoriteProduct
+
+
+class FavoriteProductAddOrRemoveView(DetailView):
+    model = Product
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get or create favorite list. Is not create - remove from favorites.
+        :param request: user (is_authenticated?)
+        :param args:
+        :param kwargs:
+        :return: Go to the Products page.
+        """
+        product = self.get_object()
+        user = request.user
+        favorite, created = FavoriteProduct.objects.get_or_create(
+            product=product,
+            user=user
+        )
+        if not created:
+            favorite.delete()
+        return HttpResponseRedirect(reverse_lazy('products'))
 
 
 @login_required
