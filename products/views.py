@@ -1,4 +1,6 @@
 import csv
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import OuterRef, Exists
@@ -51,8 +53,10 @@ class FavoriteProductAddOrRemoveView(DetailView):
             product=product,
             user=user
         )
+        messages.success(request, message='Product was add to favourites!')
         if not created:
             favorite.delete()
+            messages.warning(request, message='Product was deleted!')
         return HttpResponseRedirect(reverse_lazy('products'))
 
 

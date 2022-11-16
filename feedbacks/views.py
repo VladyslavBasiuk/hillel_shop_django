@@ -1,5 +1,5 @@
 import re
-
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from feedbacks.model_forms import FeedbackModelForm
@@ -15,7 +15,12 @@ def feedbacks(request, *args, **kwargs):
             cleaned_feedback = form.save(commit=False)
             cleaned_feedback.text = re.sub(r'([{}<>^%$@|/&#])', '',
                                            f'{form.cleaned_data.get("text")}')
+            messages.success(request,
+                             message=f'Thank {cleaned_feedback.user.email} for feedbacks!') # noqa
             cleaned_feedback.save()
+        else:
+            messages.error(request,
+                           message='Ensure this value is less than or equal to 5.')  # noqa
     else:
         form = FeedbackModelForm(user=user)
     context = {
