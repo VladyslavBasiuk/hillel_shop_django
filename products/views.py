@@ -35,6 +35,12 @@ class ProductDetailView(DetailView):
 class FavoriteProductsView(ListView):
     model = FavoriteProduct
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.select_related('product', 'user', 'product__category')\
+            .prefetch_related('product__products')
+        return qs
+
 
 class FavoriteProductAddOrRemoveView(DetailView):
     model = Product
